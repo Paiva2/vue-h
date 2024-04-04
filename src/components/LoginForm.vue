@@ -61,13 +61,17 @@
         </v-icon>
       </a>
     </p>
+
+    <p v-if="apiErrors" class="apiError">{{ apiErrors }}</p>
   </form>
 </template>
 
 <script>
 import PasswordInput from "../components/PasswordInput.vue";
 import isEmail from "validator/lib/isEmail";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import Cookies from "js-cookie"
+import router from "../router";
 
 export default {
   data() {
@@ -75,6 +79,7 @@ export default {
       email: "",
       password: "",
       sendingLogin: false,
+      apiErrors: "",
       formErrors: {},
     };
   },
@@ -93,6 +98,7 @@ export default {
 
       this.sendingLogin = true;
       this.formErrors = {};
+      this.apiErrors = "";
 
       try {
         const response = await axios.post("http://localhost:8000/api/v1/user/login", {
@@ -100,12 +106,17 @@ export default {
           password: this.password,
         });
 
-        console.log(response.data);
+        Cookies.set("vue-app-session", response.data.authToken, { expires: 7, path: "/" })
 
         this.resetData();
+
+        router.push("/home")
       } catch (e) {
-        console.log(e);
-        throw new Error(e.message);
+        if(e instanceof AxiosError){
+          console.log(e);
+          this.apiErrors = e.response.data.message
+          throw new Error(e.message);
+        }
       } finally {
         this.sendingLogin = false;
       }
@@ -223,6 +234,11 @@ export default {
 
   .github-login-btn {
     margin-top: 1.875rem;
+  }
+
+  .apiError{
+    color: rgb(233, 80, 80);
+    text-align: center;
   }
 }
 </style>

@@ -1,24 +1,49 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import { jwtDecode } from "jwt-decode";
+import Cookies from 'js-cookie';
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
-  state: {
-    userMetadata: {
-      id: null,
-      isAuthenticated: false,
-      token: null,
+  const store = new Vuex.Store({
+    // Initial store states
+    state: {
+      userMetadata: {
+        id: "",
+        isAuthenticated: false,
+        token: "",
+      },
     },
-  },
-  getters: {
-  },
-  // Used for normal actions
-  mutations: {
-  },
-  // Used to async actions
-  actions: {
-  },
-  modules: {
-  },
-});
+    getters: {
+      userMetadata(state) {
+        return state.userMetadata;
+      }
+    },
+    // Used for normal actions
+    mutations: {
+      setUserMetadata(state, payload: { id: string, token: string }){
+        state.userMetadata = {
+          id: payload.id,
+          isAuthenticated: true,
+          token: payload.token
+        }
+      }
+    },
+    // Used to async actions
+    actions: {
+      handleUserAuthentication(ctx) {
+        const getToken = Cookies.get("vue-app-session") ?? "";
+
+        if (!getToken) return;
+
+        const tokenDecoded = jwtDecode(getToken);
+
+        ctx.commit("setUserMetadata", { id: tokenDecoded.sub, token: getToken })
+      }
+    },
+    // Used to split our application stores
+    modules: {
+    },
+  });
+
+export default store;
