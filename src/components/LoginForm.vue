@@ -13,40 +13,26 @@
       Sign in with Github
     </v-btn>
     <div class="fields-section">
-      <label class="email-field" for="email-field">
-        <v-icon class="mail-icon" color="#b4b3b3" size="20" aria-hidden="false"> mdi-email </v-icon>
-        E-mail address
-        <input
-          v-model="email"
-          id="email-field"
-          type="text"
-          placeholder="Enter your e-mail address"
-        />
-      </label>
+      <div class="field-wrapper">
+        <label class="email-field" for="email-field">
+          <v-icon class="mail-icon" color="#b4b3b3" size="20" aria-hidden="false">
+            mdi-email
+          </v-icon>
+          E-mail address
+          <input
+            v-model="email"
+            id="email-field"
+            type="text"
+            placeholder="Enter your e-mail address"
+          />
+        </label>
+        <p v-if="formErrors.email" class="field-error">{{ formErrors.email }}</p>
+      </div>
 
-      <label class="password-field" for="password-field">
-        <v-icon class="mail-icon" color="#b4b3b3" size="20" aria-hidden="false"> mdi-lock </v-icon>
-        Password
-        <input
-          v-model="password"
-          id="password-field"
-          :type="togglePasswordView"
-          placeholder="Enter your password"
-        />
-        <v-btn
-          type="button"
-          class="password-view-btn"
-          elevation="0"
-          color="secondary"
-          fab
-          x-small
-          dark
-          @click="showPassword = !showPassword"
-        >
-          <v-icon v-if="!showPassword">mdi-eye-off-outline</v-icon>
-          <v-icon v-else>mdi-eye-outline</v-icon>
-        </v-btn>
-      </label>
+      <div class="field-wrapper">
+        <PasswordInput v-on:update:password-value="handlePasswordValue" />
+        <p v-if="formErrors.password" class="field-error">{{ formErrors.password }}</p>
+      </div>
     </div>
 
     <p>
@@ -79,31 +65,81 @@
 </template>
 
 <script>
+import PasswordInput from "../components/PasswordInput.vue";
+import isEmail from "validator/lib/isEmail";
+import axios from "axios";
+
 export default {
   data() {
     return {
       email: "",
       password: "",
       sendingLogin: false,
-      showPassword: false,
+      formErrors: {},
     };
   },
-  watch: {},
-  computed: {
-    togglePasswordView() {
-      return this.showPassword ? "text" : "password";
-    },
+  components: {
+    PasswordInput,
   },
+  watch: {},
+  computed: {},
   methods: {
-    handleLogin() {
+    async handleLogin() {
+      this.checkFormErrors();
+
+      const formHasErrors = Object.keys(this.formErrors).length > 0;
+
+      if (formHasErrors) return;
+
       this.sendingLogin = true;
-      setTimeout(() => (this.sendingLogin = false), 5000);
+      this.formErrors = {};
+
+      try {
+        const response = await axios.post("http://localhost:8000/api/v1/user/login", {
+          email: this.email,
+          password: this.password,
+        });
+
+        console.log(response.data);
+
+        this.resetData();
+      } catch (e) {
+        console.log(e);
+        throw new Error(e.message);
+      } finally {
+        this.sendingLogin = false;
+      }
+    },
+    handlePasswordValue(event) {
+      this.password = event;
+    },
+    checkFormErrors() {
+      const errors = {};
+
+      if (!this.email) {
+        errors.email = "E-mail can't be empty.";
+      }
+
+      if (!isEmail(this.email)) {
+        errors.email = "Invalid e-mail format.";
+      }
+
+      if (!this.password) {
+        errors.password = "Password can't be empty.";
+      } else if (this.password.length < 6) {
+        errors.password = "Password can't be less than 6 characters.";
+      }
+
+      this.formErrors = errors;
+    },
+    resetData() {
+      Object.assign(this.$data, this.$options.data.apply(this));
     },
   },
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .login-form {
   display: flex;
   flex-direction: column;
@@ -113,6 +149,17 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 0.9375rem;
+
+    .field-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      .field-error {
+        font-size: 1rem;
+        color: rgb(233, 80, 80);
+      }
+    }
 
     label {
       display: flex;
