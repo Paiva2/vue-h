@@ -5,9 +5,7 @@
 </template>
 
 <script>
-import Cookies from "js-cookie";
 import { mapGetters, mapMutations } from "vuex";
-import store from "../store";
 
 export default {
   data() {

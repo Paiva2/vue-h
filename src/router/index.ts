@@ -6,6 +6,7 @@ import Cookie from "js-cookie"
 import store from '../store';
 import { jwtDecode } from "jwt-decode";
 import RegisterViewVue from '../views/RegisterView.vue';
+import ForgotPasswordVIewVue from '../views/ForgotPasswordVIew.vue';
 
 
 Vue.use(VueRouter);
@@ -50,7 +51,7 @@ const routes: Array<RouteConfig> = [
       pageTitle: 'VueApp - Forgot Password',
       needAuth: false
     },
-    //component: ForgotPasswordView,
+    component: ForgotPasswordVIewVue,
   },
 ];
 

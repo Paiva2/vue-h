@@ -12,19 +12,28 @@
       :placeholder="holder"
       :type="showComponentPassword ? 'text' : 'password'"
     />
-    <v-btn
-      type="button"
-      class="password-view-btn"
-      elevation="0"
-      color="secondary"
-      fab
-      x-small
-      dark
-      @click="handleShowComponentPassword"
-    >
-      <v-icon v-if="!showComponentPassword">mdi-eye-off-outline</v-icon>
-      <v-icon v-else>mdi-eye-outline</v-icon>
-    </v-btn>
+    <v-tooltip bottom>
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          type="button"
+          class="password-view-btn"
+          elevation="0"
+          color="secondary"
+          fab
+          x-small
+          dark
+          @click="handleShowComponentPassword"
+          :attrs="attrs"
+          v-on="on"
+        >
+          <v-icon v-if="!showComponentPassword">mdi-eye-off-outline</v-icon>
+          <v-icon v-else>mdi-eye-outline</v-icon>
+        </v-btn>
+      </template>
+      <span
+        >{{ this.showComponentPassword ? "Hide password" : "Show password" }}
+      </span>
+    </v-tooltip>
   </label>
 </template>
 
