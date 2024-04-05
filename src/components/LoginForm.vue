@@ -9,13 +9,20 @@
       color="#7c5dfa"
       elevation="5"
     >
-      <v-icon class="github-icon" color="#fff" size="30" aria-hidden="false"> mdi-github </v-icon>
+      <v-icon class="github-icon" color="#fff" size="30" aria-hidden="false">
+        mdi-github
+      </v-icon>
       Sign in with Github
     </v-btn>
     <div class="fields-section">
       <div class="field-wrapper">
         <label class="email-field" for="email-field">
-          <v-icon class="mail-icon" color="#b4b3b3" size="20" aria-hidden="false">
+          <v-icon
+            class="mail-icon"
+            color="#b4b3b3"
+            size="20"
+            aria-hidden="false"
+          >
             mdi-email
           </v-icon>
           E-mail address
@@ -26,12 +33,16 @@
             placeholder="Enter your e-mail address"
           />
         </label>
-        <p v-if="formErrors.email" class="field-error">{{ formErrors.email }}</p>
+        <p v-if="formErrors.email" class="field-error">
+          {{ formErrors.email }}
+        </p>
       </div>
 
       <div class="field-wrapper">
         <PasswordInput v-on:update:password-value="handlePasswordValue" />
-        <p v-if="formErrors.password" class="field-error">{{ formErrors.password }}</p>
+        <p v-if="formErrors.password" class="field-error">
+          {{ formErrors.password }}
+        </p>
       </div>
     </div>
 
@@ -70,8 +81,9 @@
 import PasswordInput from "../components/PasswordInput.vue";
 import isEmail from "validator/lib/isEmail";
 import axios, { AxiosError } from "axios";
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 import router from "../router";
+import { jwtDecode } from "jwt-decode";
 
 export default {
   data() {
@@ -86,8 +98,6 @@ export default {
   components: {
     PasswordInput,
   },
-  watch: {},
-  computed: {},
   methods: {
     async handleLogin() {
       this.checkFormErrors();
@@ -101,20 +111,28 @@ export default {
       this.apiErrors = "";
 
       try {
-        const response = await axios.post("http://localhost:8000/api/v1/user/login", {
-          email: this.email,
-          password: this.password,
-        });
+        const response = await axios.post(
+          "http://localhost:8000/api/v1/user/login",
+          {
+            email: this.email,
+            password: this.password,
+          }
+        );
 
-        Cookies.set("vue-app-session", response.data.authToken, { expires: 7, path: "/" })
+        const tokenDecoded = jwtDecode(response.data.authToken);
+
+        Cookies.set("vue-app-session", response.data.authToken, {
+          expires: new Date(tokenDecoded.exp * 1000),
+          path: "/",
+        });
 
         this.resetData();
 
-        router.push("/home")
+        router.push("/home");
       } catch (e) {
-        if(e instanceof AxiosError){
+        if (e instanceof AxiosError) {
           console.log(e);
-          this.apiErrors = e.response.data.message
+          this.apiErrors = e.response.data.message;
           throw new Error(e.message);
         }
       } finally {
@@ -150,7 +168,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .login-form {
   display: flex;
   flex-direction: column;
@@ -201,27 +219,13 @@ export default {
       }
     }
 
-    .email-field,
-    .password-field {
+    .email-field {
       position: relative;
 
-      .mail-icon,
-      .password-icon {
+      .mail-icon {
         position: absolute;
         top: 50px;
         left: 10px;
-      }
-    }
-
-    .password-field {
-      input {
-        padding-right: 2.8125rem;
-      }
-
-      .password-view-btn {
-        position: absolute;
-        right: 8px;
-        top: 44px;
       }
     }
   }
@@ -236,7 +240,7 @@ export default {
     margin-top: 1.875rem;
   }
 
-  .apiError{
+  .apiError {
     color: rgb(233, 80, 80);
     text-align: center;
   }

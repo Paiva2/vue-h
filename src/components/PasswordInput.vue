@@ -1,6 +1,8 @@
 <template>
   <label class="password-field" for="password-field">
-    <v-icon class="mail-icon" color="#b4b3b3" size="20" aria-hidden="false"> mdi-lock </v-icon>
+    <v-icon class="password-icon" color="#b4b3b3" size="20" aria-hidden="false">
+      mdi-lock
+    </v-icon>
     Password
     <input
       @input="handleComponentPassword"
@@ -48,4 +50,47 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.password-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: #fff;
+  font-size: 1.125rem;
+  font-weight: 500;
+  position: relative;
+
+  input {
+    background-color: #20212b;
+    height: 3.125rem;
+    border: 0;
+    color: #fff;
+    font-size: 1rem;
+    border-radius: 5px;
+    padding-left: 2.5rem;
+    font-size: 1.125rem;
+    padding-right: 2.8125rem;
+
+    &:active,
+    &:focus {
+      outline: none;
+    }
+
+    &::placeholder {
+      color: #b4b3b3;
+    }
+  }
+
+  .password-icon {
+    position: absolute;
+    top: 50px;
+    left: 10px;
+  }
+
+  .password-view-btn {
+    position: absolute;
+    right: 8px;
+    top: 44px;
+  }
+}
+</style>
