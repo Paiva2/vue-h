@@ -32,6 +32,7 @@
         <PasswordInput
           label="Password"
           holder="Enter your password"
+          emitterAlias="password-value"
           v-on:update:password-value="handlePasswordValue"
         />
         <p v-if="formErrors.password" class="field-error">

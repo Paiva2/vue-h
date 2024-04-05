@@ -29,6 +29,17 @@ Vue.use(Vuex);
           token: payload.token
         }
       },
+      logoutSession(state){
+        Cookies.remove("vue-app-session")
+
+        state.userMetadata = {
+          id: "",
+          isAuthenticated: false,
+          token: "",
+        }
+
+        window.location.href = "/login"
+      },
       resetCustomInput(state){
         state.resetCustomInput = !state.resetCustomInput
       }
@@ -43,7 +54,8 @@ Vue.use(Vuex);
         const tokenDecoded = jwtDecode(getToken);
 
         ctx.commit("setUserMetadata", { id: tokenDecoded.sub, token: getToken })
-      }
+      },
+
     },
     // Used to split our application stores
     modules: {
