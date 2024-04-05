@@ -1,15 +1,15 @@
 <template>
-  <label class="password-field" for="password-field">
+  <label class="password-field" :for="label">
     <v-icon class="password-icon" color="#b4b3b3" size="20" aria-hidden="false">
       mdi-lock
     </v-icon>
-    Password
+    {{ label }}
     <input
       @input="handleComponentPassword"
-      id="password-field"
+      :id="label"
       :value="componentPassword"
       v-model="componentPassword"
-      placeholder="Enter your password"
+      :placeholder="holder"
       :type="showComponentPassword ? 'text' : 'password'"
     />
     <v-btn
@@ -29,24 +29,38 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
+  name: "PasswordInput",
   data() {
     return {
       showComponentPassword: false,
       componentPassword: "",
     };
   },
+  props: {
+    label: String,
+    holder: String,
+    emitterAlias: String,
+  },
+  computed: {
+    ...mapState(["resetCustomInput"]),
+  },
+  watch: {
+    resetCustomInput() {
+      this.componentPassword = "";
+      this.showComponentPassword = false;
+    },
+  },
   methods: {
     handleShowComponentPassword() {
       return (this.showComponentPassword = !this.showComponentPassword);
     },
     handleComponentPassword(e) {
-      this.$emit("update:password-value", this.componentPassword);
+      this.$emit(`update:${this.emitterAlias}`, this.componentPassword);
     },
   },
-  props: {},
-  watch: {},
-  name: "PasswordInput",
 };
 </script>
 

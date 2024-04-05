@@ -1,31 +1,42 @@
 <template>
-  <label class="email-field" for="email-field">
+  <label class="email-field" :for="label">
     <v-icon class="mail-icon" color="#b4b3b3" size="20" aria-hidden="false">
-      email
+      {{ iconName }}
     </v-icon>
 
     {{ label }}
 
     <input
-      v-model="mailValue"
-      id="email-field"
+      v-model="inputValue"
+      :id="label"
       type="text"
       :placeholder="holder"
-      @change="handleMailValue"
+      @change="handleInputValue"
     />
   </label>
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   data() {
     return {
-      mailValue: "",
+      inputValue: "",
     };
   },
+
+  computed: {
+    ...mapState(["resetCustomInput"]),
+  },
   methods: {
-    handleMailValue() {
-      this.$emit(`update:${this.emitterAlias}`, this.mailValue);
+    handleInputValue() {
+      this.$emit(`update:${this.emitterAlias}`, this.inputValue);
+    },
+  },
+  watch: {
+    resetCustomInput() {
+      this.inputValue = "";
     },
   },
   props: {

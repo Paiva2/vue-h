@@ -17,7 +17,7 @@
     <div class="fields-section">
       <div class="field-wrapper">
         <FormInput
-          iconName="email"
+          iconName="mdi-email"
           label="E-mail address"
           holder="Enter your e-mail address"
           emitterAlias="mail-value"
@@ -29,7 +29,11 @@
       </div>
 
       <div class="field-wrapper">
-        <PasswordInput v-on:update:password-value="handlePasswordValue" />
+        <PasswordInput
+          label="Password"
+          holder="Enter your password"
+          v-on:update:password-value="handlePasswordValue"
+        />
         <p v-if="formErrors.password" class="field-error">
           {{ formErrors.password }}
         </p>
@@ -38,7 +42,9 @@
 
     <p>
       Forgot your
-      <a class="forgot-password-link" href="#">password? </a>
+      <router-link class="forgot-password-link" to="/forgot-password"
+        >password?
+      </router-link>
     </p>
 
     <v-btn
@@ -55,12 +61,12 @@
 
     <p>
       Not registered yet?
-      <a href="#" class="register-link">
+      <router-link to="/register" class="register-link">
         Register now!
         <v-icon class="mail-icon" color="#7d5cfa" size="16" aria-hidden="false">
           mdi-open-in-new
         </v-icon>
-      </a>
+      </router-link>
     </p>
 
     <p v-if="apiErrors" class="apiError">{{ apiErrors }}</p>
@@ -194,11 +200,17 @@ export default {
 
   .github-login-btn {
     margin-top: 1.875rem;
+
+    .github-icon {
+      margin-right: 0.3125rem;
+    }
   }
 
   .apiError {
     color: rgb(233, 80, 80);
     text-align: center;
+    font-size: 1.125rem;
+    font-weight: 500;
   }
 }
 </style>

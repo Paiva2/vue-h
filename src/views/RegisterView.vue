@@ -1,28 +1,31 @@
 <template>
-  <div class="login-container">
-    <div class="login-wrapper">
+  <div class="register-container">
+    <div class="register-wrapper">
       <div class="title-wrapper">
-        <h2 class="login-title">Login</h2>
-        <p class="greeting-text">Welcome! Use your credetials to get in!</p>
+        <h2 class="register-title">Register</h2>
+        <p class="greeting-text">New here? Create a new account!</p>
       </div>
 
-      <LoginForm />
+      <RegisterForm />
     </div>
   </div>
 </template>
 
 <script>
-import LoginForm from "../components/LoginForm.vue";
+import RegisterForm from "../components/RegisterForm";
 
 export default {
+  data() {
+    return {};
+  },
   components: {
-    LoginForm,
+    RegisterForm,
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.login-container {
+.register-container {
   width: 100%;
   min-height: 100vh;
   display: flex;
@@ -30,7 +33,7 @@ export default {
   align-items: center;
   padding: 1.5rem;
 
-  .login-wrapper {
+  .register-wrapper {
     display: flex;
     flex-direction: column;
     background-color: #252945;
@@ -44,7 +47,7 @@ export default {
       display: flex;
       flex-direction: column;
 
-      .login-title {
+      .register-title {
         color: #fff;
         font-weight: 500;
         font-size: 2.1875rem;

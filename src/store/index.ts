@@ -13,6 +13,7 @@ Vue.use(Vuex);
         isAuthenticated: false,
         token: "",
       },
+      resetCustomInput: false
     },
     getters: {
       userMetadata(state) {
@@ -27,6 +28,9 @@ Vue.use(Vuex);
           isAuthenticated: true,
           token: payload.token
         }
+      },
+      resetCustomInput(state){
+        state.resetCustomInput = !state.resetCustomInput
       }
     },
     // Used to async actions
