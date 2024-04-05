@@ -16,23 +16,13 @@
     </v-btn>
     <div class="fields-section">
       <div class="field-wrapper">
-        <label class="email-field" for="email-field">
-          <v-icon
-            class="mail-icon"
-            color="#b4b3b3"
-            size="20"
-            aria-hidden="false"
-          >
-            mdi-email
-          </v-icon>
-          E-mail address
-          <input
-            v-model="email"
-            id="email-field"
-            type="text"
-            placeholder="Enter your e-mail address"
-          />
-        </label>
+        <FormInput
+          iconName="email"
+          label="E-mail address"
+          holder="Enter your e-mail address"
+          emitterAlias="mail-value"
+          v-on:update:mail-value="handleEmailValue"
+        />
         <p v-if="formErrors.email" class="field-error">
           {{ formErrors.email }}
         </p>
@@ -84,6 +74,7 @@ import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import router from "../router";
 import { jwtDecode } from "jwt-decode";
+import FormInput from "./FormInput.vue";
 
 export default {
   data() {
@@ -97,6 +88,7 @@ export default {
   },
   components: {
     PasswordInput,
+    FormInput,
   },
   methods: {
     async handleLogin() {
@@ -141,6 +133,9 @@ export default {
     },
     handlePasswordValue(event) {
       this.password = event;
+    },
+    handleEmailValue(event) {
+      this.email = event;
     },
     checkFormErrors() {
       const errors = {};
@@ -187,45 +182,6 @@ export default {
       .field-error {
         font-size: 1rem;
         color: rgb(233, 80, 80);
-      }
-    }
-
-    label {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      color: #fff;
-      font-size: 1.125rem;
-      font-weight: 500;
-
-      input {
-        background-color: #20212b;
-        height: 3.125rem;
-        border: 0;
-        color: #fff;
-        font-size: 1rem;
-        border-radius: 5px;
-        padding-left: 2.5rem;
-        font-size: 1.125rem;
-
-        &:active,
-        &:focus {
-          outline: none;
-        }
-
-        &::placeholder {
-          color: #b4b3b3;
-        }
-      }
-    }
-
-    .email-field {
-      position: relative;
-
-      .mail-icon {
-        position: absolute;
-        top: 50px;
-        left: 10px;
       }
     }
   }

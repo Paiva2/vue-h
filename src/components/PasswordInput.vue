@@ -8,6 +8,7 @@
       @input="handleComponentPassword"
       id="password-field"
       :value="componentPassword"
+      v-model="componentPassword"
       placeholder="Enter your password"
       :type="showComponentPassword ? 'text' : 'password'"
     />
@@ -40,8 +41,7 @@ export default {
       return (this.showComponentPassword = !this.showComponentPassword);
     },
     handleComponentPassword(e) {
-      this.componentPassword = e.target.value;
-      this.$emit("update:password-value", e.target.value);
+      this.$emit("update:password-value", this.componentPassword);
     },
   },
   props: {},
