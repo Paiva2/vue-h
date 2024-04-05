@@ -13,15 +13,22 @@ Vue.use(Vuex);
         isAuthenticated: false,
         token: "",
       },
-      resetCustomInput: false
+      resetCustomInput: false,
+      activeView: "contactView"
     },
     getters: {
       userMetadata(state) {
         return state.userMetadata;
+      },
+      activeView(state) {
+        return state.activeView
       }
     },
     // Used for normal actions
     mutations: {
+      changeActiveView(state, payload: string){
+        state.activeView = payload
+      },
       setUserMetadata(state, payload: { id: string, token: string }){
         state.userMetadata = {
           id: payload.id,

@@ -30,4 +30,9 @@
 .v-application p {
   margin: 0 !important;
 }
+
+.v-btn__content {
+  max-width: 100%;
+  max-height: 100%;
+}
 </style>

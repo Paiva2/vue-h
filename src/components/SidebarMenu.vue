@@ -2,98 +2,33 @@
   <header class="sidebar-header">
     <nav class="menu-items">
       <ul class="menu-list">
-        <div class="text-center">
-          <v-menu
-            v-model="openProfileMenu"
-            :close-on-content-click="false"
-            :nudge-width="250"
-            :nudge-right="10"
-            offset-x
-            transition="scale-transition"
+        <v-menu
+          v-model="openProfileMenu"
+          :close-on-content-click="false"
+          :nudge-width="250"
+          :nudge-right="10"
+          offset-x
+          transition="scale-transition"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn class="open-profile-btn" v-bind="attrs" v-on="on" fab>
+              <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
+            </v-btn>
+          </template>
+
+          <ProfileMenu :handleOpenProfileMenu="handleOpenProfileMenu" />
+        </v-menu>
+
+        <li v-for="item in menuOptions" :key="item.id">
+          <v-btn
+            @click="changeActiveView(item.value)"
+            block
+            class="menu-button"
+            depressed
+            :color="setActiveMenuItem(item.value)"
           >
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn v-bind="attrs" v-on="on" fab color="teal">
-                <v-icon dark> mdi-account </v-icon>
-              </v-btn>
-            </template>
-
-            <v-card>
-              <v-list>
-                <v-list-item>
-                  <v-list-item-avatar>
-                    <img
-                      src="https://cdn.vuetifyjs.com/images/john.jpg"
-                      alt="John"
-                    />
-                  </v-list-item-avatar>
-
-                  <v-list-item-content>
-                    <v-list-item-title>John Leider</v-list-item-title>
-                    <v-list-item-subtitle
-                      >Founder of Vuetify</v-list-item-subtitle
-                    >
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-
-              <v-divider></v-divider>
-
-              <v-list>
-                <v-list-item>
-                  <v-dialog
-                    v-model="openProfileForm"
-                    persistent
-                    max-width="600px"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        large
-                        width="100%"
-                        color="#7c5dfa"
-                        dark
-                        v-bind="attrs"
-                        v-on="on"
-                      >
-                        Edit profile
-                      </v-btn>
-                    </template>
-                    <EditProfileForm
-                      :handleOpenProfileForm="handleOpenProfileForm"
-                    />
-                  </v-dialog>
-                </v-list-item>
-              </v-list>
-
-              <v-card-actions>
-                <v-spacer></v-spacer>
-
-                <v-btn color="red" text @click="handleLogout"> Logout </v-btn>
-                <v-btn color="#fff  " text @click="handleOpenProfileMenu">
-                  Close
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-menu>
-        </div>
-
-        <li>
-          <v-btn class="mx-2" fab dark color="teal">
-            <v-icon dark> mdi-format-list-bulleted-square </v-icon>
-          </v-btn>
-        </li>
-        <li>
-          <v-btn class="mx-2" fab dark color="teal">
-            <v-icon dark> mdi-format-list-bulleted-square </v-icon>
-          </v-btn>
-        </li>
-        <li>
-          <v-btn class="mx-2" fab dark color="teal">
-            <v-icon dark> mdi-format-list-bulleted-square </v-icon>
-          </v-btn>
-        </li>
-        <li>
-          <v-btn class="mx-2" fab dark color="teal">
-            <v-icon dark> mdi-format-list-bulleted-square </v-icon>
+            <v-icon color="#20212B">{{ item.icon }}</v-icon>
+            <span>{{ item.label }}</span>
           </v-btn>
         </li>
       </ul>
@@ -102,32 +37,35 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import EditProfileForm from "./EditProfileForm.vue";
-import store from "../store";
+import ProfileMenu from "./ProfileMenu.vue";
+import menuOptions from "../resources/menuOptions";
 
 export default {
   name: "SidebarMenu",
   components: {
     EditProfileForm,
+    ProfileMenu,
   },
   data() {
     return {
-      openProfileForm: false,
       openProfileMenu: false,
+      menuOptions,
     };
   },
+  computed: {
+    ...mapGetters(["activeView"]),
+  },
   methods: {
-    ...mapMutations(["logoutSession"]),
-    handleOpenProfileForm() {
-      this.openProfileForm = !this.openProfileForm;
-    },
+    ...mapMutations(["changeActiveView"]),
     handleOpenProfileMenu() {
       this.openProfileMenu = !this.openProfileMenu;
     },
-    handleLogout() {
-      this.handleOpenProfileMenu();
-      store.commit("logoutSession");
+    setActiveMenuItem(menuName) {
+      return menuName === this.activeView
+        ? "rgba(245, 245, 245, 0.8)"
+        : "rgba(245, 245, 245, 0.4)";
     },
   },
 };
@@ -136,16 +74,16 @@ export default {
 <style lang="scss" scoped>
 .sidebar-header {
   width: 100%;
-  max-width: 100px;
+  max-width: 15rem;
   height: 100%;
   background-color: #373c63;
-  border-radius: 20px;
+  border-radius: 10px;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 
   .menu-items {
     width: 100%;
-    padding: 1.25rem;
+    padding-top: 1.25rem;
 
     .menu-list {
       display: flex;
@@ -155,10 +93,44 @@ export default {
       list-style: none;
       font-size: 18px;
       align-items: center;
-      gap: 30px;
 
       li {
-        color: red;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .open-profile-btn {
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+
+        img {
+          object-fit: cover;
+          max-width: 100%;
+          max-height: 100%;
+          border-radius: 100%;
+        }
+      }
+
+      .menu-button {
+        height: 50px;
+        font-weight: 500;
+        color: rgb(0 0 0 / 87%);
+        border-radius: 0;
+        font-size: 0.875rem;
+        gap: 10px;
+        display: flex;
+        align-items: center;
+
+        span {
+          width: 5.625rem;
+          margin-left: 0.625rem;
+          text-align: left;
+        }
       }
     }
   }
