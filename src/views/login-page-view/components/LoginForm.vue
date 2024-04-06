@@ -132,7 +132,6 @@ export default {
         if (e instanceof AxiosError) {
           console.log(e);
           this.apiErrors = e.response.data.message;
-          throw new Error(e.message);
         }
       } finally {
         this.sendingLogin = false;

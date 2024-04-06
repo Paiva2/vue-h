@@ -131,8 +131,6 @@ export default {
           console.log(e);
 
           this.apiErrors = e.response.data.message;
-
-          throw new Error(e);
         }
       } finally {
         this.sendingForgotPassword = false;

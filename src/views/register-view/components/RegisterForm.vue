@@ -168,10 +168,7 @@ export default {
       } catch (e) {
         if (e instanceof AxiosError) {
           console.log(e);
-
           this.apiErrors = e.response.data.message;
-
-          throw new Error(e);
         }
       } finally {
         this.sendingRegister = false;

@@ -1,16 +1,16 @@
 <template>
   <div class="contacts-table">
     <v-data-table
-      dark
       :headers="headers"
       :items="contactList"
       :loading="tableItemsLoading"
       :page.sync="pageOptions.page"
-      @page-count="pageOptions.totalPages = $event"
+      :server-items-length="pageOptions.totalElements"
+      dark
       hide-default-footer
-      class="elevation-3 contact-table"
-      height="37.5rem"
       fixed-header
+      class="elevation-3 contact-table"
+      height="33.5rem"
     >
       <template v-slot:top>
         <v-toolbar flat class="table-toolbar">
@@ -35,6 +35,9 @@
           <CreateContact
             :handleOpenNewContactForm="handleOpenNewContactForm"
             :isNewContactFormOpen="isNewContactFormOpen"
+            :getContacts="getContacts"
+            :pageOptions="pageOptions"
+            :handleSetCurrentPage="handleSetCurrentPage"
           />
 
           <v-menu class="menu-per-page" offset-y>
@@ -65,7 +68,7 @@
                   type="number"
                   class="per-page-button"
                   @click="pageOptions.itemsPerPage = parseInt(option)"
-                  :disabled="option >= pageOptions.totalElements"
+                  :disabled="option > pageOptions.totalElements"
                 >
                   {{ option }}
                 </v-btn>
@@ -84,7 +87,7 @@
     <div class="text-center pt-2">
       <v-pagination
         v-model="pageOptions.page"
-        :length="pageOptions.pageSize"
+        :length="pageOptions.totalPages"
         color="#373c63"
         total-visible="6"
       ></v-pagination>
@@ -96,6 +99,7 @@
 import axios, { AxiosError } from "axios";
 import { mapGetters } from "vuex";
 import CreateContact from "../create-contact/index.vue";
+import dateFormatter from "../../../../utils/dateFormatter";
 
 export default {
   name: "ContactsTable",
@@ -111,7 +115,7 @@ export default {
       pageOptions: {
         page: 1,
         itemsPerPage: 5,
-        pageSize: 0,
+        totalPages: 0,
         totalElements: 0,
         perPageOptions: ["5", "10", "20", "30", "40", "50"],
       },
@@ -156,6 +160,9 @@ export default {
     handleOpenNewContactForm() {
       this.isNewContactFormOpen = !this.isNewContactFormOpen;
     },
+    handleSetCurrentPage(pageVal) {
+      this.pageOptions.page = pageVal;
+    },
     async getContacts(page, perPage) {
       this.tableItemsLoading = true;
 
@@ -171,18 +178,21 @@ export default {
 
         const contacts = requestContacts.data;
 
-        this.contactList = contacts.contactsList;
+        this.contactList = contacts.contactsList.map((contact) => {
+          contact.createdAt = dateFormatter(new Date(contact.createdAt));
+
+          return contact;
+        });
         this.pageOptions = {
           ...this.pageOptions,
           page: contacts.page + 1,
           itemsPerPage: contacts.pageSize,
-          pageSize: contacts.totalPages,
+          totalPages: contacts.totalPages,
           totalElements: contacts.totalElements,
         };
       } catch (e) {
         if (e instanceof AxiosError) {
           console.log(e);
-          throw new Error(e.message);
         }
       } finally {
         this.tableItemsLoading = false;
