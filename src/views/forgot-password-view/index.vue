@@ -1,31 +1,29 @@
 <template>
-  <div class="register-container">
-    <div class="register-wrapper">
+  <div class="forgotPassword-container">
+    <div class="forgotPassword-wrapper">
       <div class="title-wrapper">
-        <h2 class="register-title">Register</h2>
-        <p class="greeting-text">New here? Create a new account!</p>
+        <h2 class="forgotPassword-title">Forgot Password</h2>
+        <p class="greeting-text">Recover your password bellow!</p>
       </div>
 
-      <RegisterForm />
+      <ForgotPasswordForm />
     </div>
   </div>
 </template>
 
 <script>
-import RegisterForm from "../components/RegisterForm";
+import ForgotPasswordForm from "./components/ForgotPasswordForm.vue";
 
 export default {
-  data() {
-    return {};
-  },
+  name: "ForgotPasswordView",
   components: {
-    RegisterForm,
+    ForgotPasswordForm,
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.register-container {
+.forgotPassword-container {
   width: 100%;
   min-height: 100vh;
   display: flex;
@@ -33,7 +31,7 @@ export default {
   align-items: center;
   padding: 1.5rem;
 
-  .register-wrapper {
+  .forgotPassword-wrapper {
     display: flex;
     flex-direction: column;
     background-color: #252945;
@@ -42,12 +40,13 @@ export default {
     max-width: 37.5rem;
     border-radius: 8px;
     padding: 2.5rem;
+    gap: 0.9375rem;
 
     .title-wrapper {
       display: flex;
       flex-direction: column;
 
-      .register-title {
+      .forgotPassword-title {
         color: #fff;
         font-weight: 500;
         font-size: 2.1875rem;

@@ -1,13 +1,10 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
-import LoginView from '../views/LoginView.vue';
 import HomeView from '../views/HomeView.vue';
-import Cookie from "js-cookie"
 import store from '../store';
-import { jwtDecode } from "jwt-decode";
-import RegisterViewVue from '../views/RegisterView.vue';
-import ForgotPasswordVIewVue from '../views/ForgotPasswordVIew.vue';
-
+import RegisterViewVue from '../views/register-view/index.vue';
+import LoginView from '../views/login-page-view/index.vue';
+import ForgotPasswordFormView from '../views/forgot-password-view/index.vue';
 
 Vue.use(VueRouter);
 
@@ -51,7 +48,7 @@ const routes: Array<RouteConfig> = [
       pageTitle: 'VueApp - Forgot Password',
       needAuth: false
     },
-    component: ForgotPasswordVIewVue,
+    component: ForgotPasswordFormView,
   },
 ];
 
@@ -64,7 +61,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   document.title = to.meta?.pageTitle ?? '';
 
-  store.dispatch("handleUserAuthentication")
+   store.dispatch("handleUserAuthentication")
 
   const isRequesterAuthenticated = store.getters.userMetadata.isAuthenticated;
 

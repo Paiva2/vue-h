@@ -2,18 +2,20 @@
   <div class="home">
     <SidebarMenu />
 
-    <ContactView v-if="activeView === 'contactView'" />
-    <FoldersView v-if="activeView === 'foldersView'" />
-    <DocumentsView v-if="activeView === 'documentsView'" />
+    <div class="views-wrapper">
+      <ContactView v-if="activeView === 'contactView'" />
+      <FoldersView v-if="activeView === 'foldersView'" />
+      <DocumentsView v-if="activeView === 'documentsView'" />
+    </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import SidebarMenu from "../components/SidebarMenu.vue";
-import ContactView from "./ContactView.vue";
-import FoldersView from "./FoldersView.vue";
-import DocumentsView from "./DocumentsView.vue";
+import ContactView from "./contact-view";
+import FoldersView from "./folders-view/index.vue";
+import DocumentsView from "./documents-view/index.vue";
 
 export default {
   data() {
@@ -42,5 +44,13 @@ export default {
   width: 100%;
   display: flex;
   height: 100vh;
+
+  .views-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 </style>

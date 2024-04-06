@@ -1,6 +1,33 @@
 <template>
-  <form @submit.prevent="handleForgotPassword" class="forgot-pass-form">
+  <form @submit.prevent="handleRegister" class="register-form">
+    <v-btn
+      :disabled="sendingRegister"
+      class="github-register-btn"
+      height="50"
+      type="button"
+      large
+      color="#7c5dfa"
+      elevation="5"
+    >
+      <v-icon class="github-icon" color="#fff" size="30" aria-hidden="false">
+        mdi-github
+      </v-icon>
+      Register with Github
+    </v-btn>
     <div class="fields-section">
+      <div class="field-wrapper">
+        <FormInput
+          iconName="mdi-account"
+          label="Name"
+          holder="Enter your name"
+          emitterAlias="name-value"
+          v-on:update:name-value="handleNameValue"
+        />
+        <p v-if="formErrors.name" class="field-error">
+          {{ formErrors.name }}
+        </p>
+      </div>
+
       <div class="field-wrapper">
         <FormInput
           iconName="mdi-email"
@@ -39,25 +66,32 @@
       </div>
     </div>
 
+    <p>
+      Forgot your
+      <router-link class="forgot-password-link" to="/forgot-password"
+        >password?
+      </router-link>
+    </p>
+
     <p v-if="apiSuccess" class="apiSuccess">Registered successully!</p>
     <p v-if="apiErrors" class="apiError">{{ apiErrors }}</p>
 
     <v-btn
-      :loading="sendingForgotPassword"
-      :disabled="sendingForgotPassword"
+      :loading="sendingRegister"
+      :disabled="sendingRegister"
       height="50"
       type="submit"
       large
       color="#7c5dfa"
       elevation="5"
     >
-      Submit
+      Register
     </v-btn>
 
     <p>
-      Not registered yet?
-      <router-link to="/register" class="register-link">
-        Register now!
+      Already has an account?
+      <router-link to="/login" class="login-link">
+        Sign in!
         <v-icon class="mail-icon" color="#7d5cfa" size="16" aria-hidden="false">
           mdi-open-in-new
         </v-icon>
@@ -68,28 +102,30 @@
 
 <script>
 import axios, { AxiosError } from "axios";
-import FormInput from "./FormInput.vue";
-import PasswordInput from "./PasswordInput.vue";
+import FormInput from "../../../components/FormInput.vue";
+import PasswordInput from "../../../components/PasswordInput.vue";
 import isEmail from "validator/lib/isEmail";
 import { mapMutations } from "vuex";
 
 export default {
-  name: "ForgotPasswordForm",
+  name: "RegisterForm",
   data() {
     return {
       userInfos: {
         email: "",
+        name: "",
         password: "",
         passwordConfirmation: "",
       },
       formErrors: {
+        name: "",
         email: "",
         password: "",
         passwordConfirmation: "",
       },
       apiErrors: "",
       apiSuccess: false,
-      sendingForgotPassword: false,
+      sendingRegister: false,
     };
   },
   components: {
@@ -98,6 +134,9 @@ export default {
   },
   methods: {
     ...mapMutations(["resetCustomInput"]),
+    handleNameValue(event) {
+      this.userInfos.name = event;
+    },
     handleEmailValue(event) {
       this.userInfos.email = event;
     },
@@ -107,7 +146,7 @@ export default {
     handlePasswordConfirmationValue(event) {
       this.userInfos.passwordConfirmation = event;
     },
-    async handleForgotPassword() {
+    async handleRegister() {
       this.formErrors = {};
       this.apiErrors = "";
 
@@ -117,13 +156,13 @@ export default {
 
       if (formHasErrors) return;
 
-      this.sendingForgotPassword = true;
+      this.sendingRegister = true;
 
       try {
-        await axios.put("http://localhost:8000/api/v1/user/forgot-password", {
-          email: this.userInfos.email,
-          password: this.userInfos.password,
-        });
+        await axios.post(
+          "http://localhost:8000/api/v1/user/register",
+          this.userInfos
+        );
 
         this.resetStates();
       } catch (e) {
@@ -135,7 +174,7 @@ export default {
           throw new Error(e);
         }
       } finally {
-        this.sendingForgotPassword = false;
+        this.sendingRegister = false;
         this.formErrors = {};
 
         setTimeout(() => {
@@ -148,6 +187,7 @@ export default {
       this.apiSuccess = true;
       this.userInfos = {
         email: "",
+        name: "",
         password: "",
         passwordConfirmation: "",
       };
@@ -156,6 +196,12 @@ export default {
     },
     checkFormErrors() {
       const errors = {};
+
+      if (!this.userInfos.name) {
+        errors.name = "Name can't be empty.";
+      } else if (this.userInfos.name.length < 5) {
+        errors.name = "Name must have at least 5 characters.";
+      }
 
       if (!isEmail(this.userInfos.email)) {
         errors.email = "Invalid e-mail.";
@@ -181,7 +227,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.forgot-pass-form {
+.register-form {
   display: flex;
   flex-direction: column;
   gap: 1.875rem;
@@ -203,9 +249,18 @@ export default {
     }
   }
 
-  .register-link {
+  .login-link,
+  .forgot-password-link {
     color: #7d5cfa;
     font-weight: 500;
+  }
+
+  .github-register-btn {
+    margin-top: 1.875rem;
+
+    .github-icon {
+      margin-right: 0.3125rem;
+    }
   }
 
   .apiError {

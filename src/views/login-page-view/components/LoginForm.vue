@@ -75,13 +75,13 @@
 </template>
 
 <script>
-import PasswordInput from "../components/PasswordInput.vue";
 import isEmail from "validator/lib/isEmail";
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
-import router from "../router";
+import router from "../../../router";
 import { jwtDecode } from "jwt-decode";
-import FormInput from "./FormInput.vue";
+import PasswordInput from "../../../components/PasswordInput.vue";
+import FormInput from "../../../components/FormInput.vue";
 
 export default {
   data() {
