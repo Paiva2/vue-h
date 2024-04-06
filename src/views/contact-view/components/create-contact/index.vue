@@ -69,7 +69,7 @@
           text
           @click="close"
         >
-          Cancel
+          Close
         </v-btn>
         <v-btn
           :disabled="sendingNewContact"

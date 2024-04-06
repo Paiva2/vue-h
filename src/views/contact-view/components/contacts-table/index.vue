@@ -11,27 +11,14 @@
       fixed-header
       class="elevation-3 contact-table"
       height="33.5rem"
+      loading-text=""
     >
+      <template v-slot:no-data>
+        <EmptyTableFallback />
+      </template>
+
       <template v-slot:top>
         <v-toolbar flat class="table-toolbar">
-          <v-dialog v-model="dialogDelete" max-width="550px">
-            <v-card>
-              <v-card-title class="text-h5">
-                Are you sure you want to delete this contact?
-              </v-card-title>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="closeDelete">
-                  Cancel
-                </v-btn>
-                <v-btn color="blue darken-1" text @click="deleteItemConfirm">
-                  Confirm
-                </v-btn>
-                <v-spacer></v-spacer>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-
           <CreateContact
             :handleOpenNewContactForm="handleOpenNewContactForm"
             :isNewContactFormOpen="isNewContactFormOpen"
@@ -75,6 +62,12 @@
               </v-list-item>
             </v-list>
           </v-menu>
+
+          <ConfirmDeleteDialog
+            :openDeleteDialog="openDeleteDialog"
+            :closeDelete="closeDelete"
+            :deleteItemConfirm="deleteItemConfirm"
+          />
         </v-toolbar>
       </template>
 
@@ -99,18 +92,22 @@
 import axios, { AxiosError } from "axios";
 import { mapGetters } from "vuex";
 import CreateContact from "../create-contact/index.vue";
+import ConfirmDeleteDialog from "../confirm-delete-dialog/index.vue";
+import EmptyTableFallback from "../empty-table-fallback/index.vue";
 import dateFormatter from "../../../../utils/dateFormatter";
 
 export default {
   name: "ContactsTable",
   components: {
     CreateContact,
+    ConfirmDeleteDialog,
+    EmptyTableFallback,
   },
   data: () => {
     return {
-      dialogDelete: false,
+      openDeleteDialog: false,
       isNewContactFormOpen: false,
-      tableItemsLoading: false,
+      tableItemsLoading: true,
       handleOpenItensPerPage: false,
       pageOptions: {
         page: 1,
@@ -127,6 +124,7 @@ export default {
         { text: "Actions", value: "actions", sortable: false },
       ],
       contactList: [],
+      itemToDelete: "",
     };
   },
 
@@ -138,7 +136,7 @@ export default {
   },
 
   watch: {
-    dialogDelete(val) {
+    openDeleteDialog(val) {
       val || this.closeDelete();
     },
     "pageOptions.page": function (curr) {
@@ -205,16 +203,39 @@ export default {
       );
     },
 
+    async deleteContact(contactId) {
+      try {
+        await axios.delete(
+          `http://localhost:8000/api/v1/contact/${contactId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.userMetadata.token}`,
+            },
+          }
+        );
+
+        this.closeDelete();
+
+        await this.getContacts(1, 5);
+      } catch (e) {
+        if (e instanceof AxiosError) {
+          console.log(e);
+        }
+      }
+    },
+
     deleteItem(item) {
-      this.dialogDelete = true;
+      this.openDeleteDialog = true;
+      this.itemToDelete = item;
     },
 
     deleteItemConfirm() {
-      this.closeDelete();
+      this.deleteContact(this.itemToDelete.id);
     },
 
     closeDelete() {
-      this.dialogDelete = false;
+      this.itemToDelete = "";
+      this.openDeleteDialog = false;
     },
   },
 };
@@ -222,6 +243,8 @@ export default {
 
 <style lang="scss" scoped>
 .contacts-table {
+  position: relative;
+
   &::v-deep {
     .contact-table {
       max-height: 100%;
