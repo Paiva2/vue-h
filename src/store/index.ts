@@ -14,16 +14,17 @@ Vue.use(Vuex);
         token: "",
       },
       resetCustomInput: false,
-      activeView: "contactView"
+      activeView: "contactView",
     },
     getters: {
       userMetadata(state) {
         return state.userMetadata;
       },
       activeView(state) {
-        return state.activeView
+        return state.activeView;
       }
     },
+
     // Used for normal actions
     mutations: {
       changeActiveView(state, payload: string){
