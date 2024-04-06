@@ -85,9 +85,10 @@
 </template>
 
 <script>
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { mapGetters } from "vuex";
 import isEmail from "validator/lib/isEmail";
+import api from "../../../../lib/api";
 
 export default {
   name: "CreateContact",
@@ -145,15 +146,11 @@ export default {
       this.sendingNewContact = true;
 
       try {
-        await axios.post(
-          "http://localhost:8000/api/v1/contact/new",
-          newContact,
-          {
-            headers: {
-              Authorization: `Bearer ${this.userMetadata.token}`,
-            },
-          }
-        );
+        await api.post("/api/v1/contact/new", newContact, {
+          headers: {
+            Authorization: `Bearer ${this.userMetadata.token}`,
+          },
+        });
 
         await this.getContacts(
           this.pageOptions.page,

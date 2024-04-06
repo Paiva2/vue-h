@@ -76,12 +76,13 @@
 
 <script>
 import isEmail from "validator/lib/isEmail";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import router from "../../../router";
 import { jwtDecode } from "jwt-decode";
 import PasswordInput from "../../../components/PasswordInput.vue";
 import FormInput from "../../../components/FormInput.vue";
+import api from "../../../lib/api";
 
 export default {
   data() {
@@ -110,13 +111,10 @@ export default {
       this.apiErrors = "";
 
       try {
-        const response = await axios.post(
-          "http://localhost:8000/api/v1/user/login",
-          {
-            email: this.email,
-            password: this.password,
-          }
-        );
+        const response = await api.post("/api/v1/user/login", {
+          email: this.email,
+          password: this.password,
+        });
 
         const tokenDecoded = jwtDecode(response.data.authToken);
 

@@ -67,11 +67,12 @@
 </template>
 
 <script>
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import FormInput from "../../../components/FormInput.vue";
 import PasswordInput from "../../../components/PasswordInput.vue";
 import isEmail from "validator/lib/isEmail";
 import { mapMutations } from "vuex";
+import api from "../../../lib/api";
 
 export default {
   name: "ForgotPasswordForm",
@@ -120,7 +121,7 @@ export default {
       this.sendingForgotPassword = true;
 
       try {
-        await axios.put("http://localhost:8000/api/v1/user/forgot-password", {
+        await api.put("/api/v1/user/forgot-password", {
           email: this.userInfos.email,
           password: this.userInfos.password,
         });

@@ -101,11 +101,12 @@
 </template>
 
 <script>
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import FormInput from "../../../components/FormInput.vue";
 import PasswordInput from "../../../components/PasswordInput.vue";
 import isEmail from "validator/lib/isEmail";
 import { mapMutations } from "vuex";
+import api from "../../../lib/api";
 
 export default {
   name: "RegisterForm",
@@ -159,10 +160,7 @@ export default {
       this.sendingRegister = true;
 
       try {
-        await axios.post(
-          "http://localhost:8000/api/v1/user/register",
-          this.userInfos
-        );
+        await api.post("/api/v1/user/register", this.userInfos);
 
         this.resetStates();
       } catch (e) {

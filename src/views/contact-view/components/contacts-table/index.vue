@@ -89,12 +89,14 @@
 </template>
 
 <script>
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { mapGetters } from "vuex";
 import CreateContact from "../create-contact/index.vue";
 import ConfirmDeleteDialog from "../confirm-delete-dialog/index.vue";
 import EmptyTableFallback from "../empty-table-fallback/index.vue";
 import dateFormatter from "../../../../utils/dateFormatter";
+import api from "../../../../lib/api";
+import { sleep } from "../../../../utils/sleep";
 
 export default {
   name: "ContactsTable",
@@ -165,8 +167,8 @@ export default {
       this.tableItemsLoading = true;
 
       try {
-        const requestContacts = await axios.get(
-          `http://localhost:8000/api/v1/contact/list-all?page=${page}&size=${perPage}`,
+        const requestContacts = await api.get(
+          `/api/v1/contact/list-all?page=${page}&size=${perPage}`,
           {
             headers: {
               Authorization: `Bearer ${this.userMetadata.token}`,
@@ -205,14 +207,11 @@ export default {
 
     async deleteContact(contactId) {
       try {
-        await axios.delete(
-          `http://localhost:8000/api/v1/contact/${contactId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.userMetadata.token}`,
-            },
-          }
-        );
+        await api.delete(`/api/v1/contact/${contactId}`, {
+          headers: {
+            Authorization: `Bearer ${this.userMetadata.token}`,
+          },
+        });
 
         this.closeDelete();
 
