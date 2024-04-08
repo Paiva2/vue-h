@@ -96,7 +96,6 @@ import ConfirmDeleteDialog from "../confirm-delete-dialog/index.vue";
 import EmptyTableFallback from "../empty-table-fallback/index.vue";
 import dateFormatter from "../../../../utils/dateFormatter";
 import api from "../../../../lib/api";
-import { sleep } from "../../../../utils/sleep";
 
 export default {
   name: "ContactsTable",

@@ -13,33 +13,11 @@
           {{ formErrors.email }}
         </p>
       </div>
-
-      <div class="field-wrapper">
-        <PasswordInput
-          label="Password"
-          holder="Enter your password"
-          emitterAlias="password-value"
-          v-on:update:password-value="handlePasswordValue"
-        />
-        <p v-if="formErrors.password" class="field-error">
-          {{ formErrors.password }}
-        </p>
-      </div>
-
-      <div class="field-wrapper">
-        <PasswordInput
-          label="Confirm Password"
-          holder="Confirm your password"
-          emitterAlias="password-confirm-value"
-          v-on:update:password-confirm-value="handlePasswordConfirmationValue"
-        />
-        <p v-if="formErrors.passwordConfirmation" class="field-error">
-          {{ formErrors.passwordConfirmation }}
-        </p>
-      </div>
     </div>
 
-    <p v-if="apiSuccess" class="apiSuccess">Registered successully!</p>
+    <p v-if="apiSuccess" class="apiSuccess">
+      A new password was sent to your e-mail.
+    </p>
     <p v-if="apiErrors" class="apiError">{{ apiErrors }}</p>
 
     <v-btn
@@ -80,13 +58,9 @@ export default {
     return {
       userInfos: {
         email: "",
-        password: "",
-        passwordConfirmation: "",
       },
       formErrors: {
         email: "",
-        password: "",
-        passwordConfirmation: "",
       },
       apiErrors: "",
       apiSuccess: false,
@@ -121,12 +95,12 @@ export default {
       this.sendingForgotPassword = true;
 
       try {
-        await api.put("/api/v1/user/forgot-password", {
+        await api.patch("/api/v1/user/forgot-password", {
           email: this.userInfos.email,
-          password: this.userInfos.password,
         });
 
         this.resetStates();
+        this.apiSuccess = true;
       } catch (e) {
         if (e instanceof AxiosError) {
           console.log(e);
@@ -144,11 +118,8 @@ export default {
       }
     },
     resetStates() {
-      this.apiSuccess = true;
       this.userInfos = {
         email: "",
-        password: "",
-        passwordConfirmation: "",
       };
       this.apiErrors = "";
       this.resetCustomInput();
@@ -158,19 +129,6 @@ export default {
 
       if (!isEmail(this.userInfos.email)) {
         errors.email = "Invalid e-mail.";
-      }
-
-      if (!this.userInfos.password) {
-        errors.password = "Password can't be empty.";
-      } else if (this.userInfos.password.length < 6) {
-        errors.password = "Password must have at least 6 characters.";
-      }
-
-      if (
-        this.userInfos.password !== this.userInfos.passwordConfirmation ||
-        !this.userInfos.passwordConfirmation
-      ) {
-        errors.passwordConfirmation = "Passwords doesn't match.";
       }
 
       this.formErrors = errors;
