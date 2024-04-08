@@ -24,7 +24,6 @@
             :isNewContactFormOpen="isNewContactFormOpen"
             :getContacts="getContacts"
             :pageOptions="pageOptions"
-            :handleSetCurrentPage="handleSetCurrentPage"
           />
 
           <v-menu class="menu-per-page" offset-y>
@@ -69,10 +68,20 @@
             :deleteItemConfirm="deleteItemConfirm"
           />
         </v-toolbar>
+
+        <EditContactForm
+          :handleOpenEditContactForm="handleOpenEditContactForm"
+          :openEditDialog="openEditDialog"
+          :getContacts="getContacts"
+          :pageOptions="pageOptions"
+          :contactToEdit="contactToEdit"
+        />
       </template>
 
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon small class="mr-2"> mdi-pencil </v-icon>
+        <v-icon small class="mr-2" @click="handleOpenEditContactForm(item)">
+          mdi-pencil
+        </v-icon>
         <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
       </template>
     </v-data-table>
@@ -94,6 +103,7 @@ import { mapGetters } from "vuex";
 import CreateContact from "../create-contact/index.vue";
 import ConfirmDeleteDialog from "../confirm-delete-dialog/index.vue";
 import EmptyTableFallback from "../empty-table-fallback/index.vue";
+import EditContactForm from "../edit-contact-form/index.vue";
 import dateFormatter from "../../../../utils/dateFormatter";
 import api from "../../../../lib/api";
 
@@ -103,9 +113,11 @@ export default {
     CreateContact,
     ConfirmDeleteDialog,
     EmptyTableFallback,
+    EditContactForm,
   },
   data: () => {
     return {
+      openEditDialog: false,
       openDeleteDialog: false,
       isNewContactFormOpen: false,
       tableItemsLoading: true,
@@ -126,6 +138,11 @@ export default {
       ],
       contactList: [],
       itemToDelete: "",
+      contactToEdit: {
+        name: "",
+        email: "",
+        phone: "",
+      },
     };
   },
 
@@ -220,6 +237,17 @@ export default {
           console.log(e);
         }
       }
+    },
+
+    handleOpenEditContactForm(contact) {
+      this.contactToEdit = {
+        id: contact.id,
+        name: contact.name,
+        email: contact.email,
+        phone: contact.phone,
+      };
+
+      this.openEditDialog = !this.openEditDialog;
     },
 
     deleteItem(item) {
