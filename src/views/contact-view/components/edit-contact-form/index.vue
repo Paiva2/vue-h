@@ -47,7 +47,11 @@
       </v-card-text>
 
       <p v-if="apiSuccess" class="apiMessageSuccess">Contact edited!</p>
-      <p v-if="apiError" class="apiMessageError">{{ apiError }}</p>
+      <template v-if="apiError?.length">
+        <p v-for="err in formatApiErrors" :key="err" class="apiMessageError">
+          {{ err }}
+        </p>
+      </template>
 
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -114,6 +118,9 @@ export default {
 
   computed: {
     ...mapGetters(["userMetadata"]),
+    formatApiErrors() {
+      return this.apiError.replace("[", "").replace("]", "").split(",");
+    },
   },
 
   methods: {
@@ -170,7 +177,8 @@ export default {
       } catch (e) {
         if (e instanceof AxiosError) {
           console.log(e);
-          this.apiErrors = e.response.data.message;
+          this.apiError = e.response.data.message;
+          console.log(this.apiError);
         }
       } finally {
         this.sendingEditContact = false;
