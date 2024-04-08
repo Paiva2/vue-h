@@ -12,7 +12,13 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn class="open-profile-btn" v-bind="attrs" v-on="on" fab>
-              <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
+              <img
+                :src="
+                  userMetadata?.profilePicture ??
+                  'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg'
+                "
+                alt="Profile Picture"
+              />
             </v-btn>
           </template>
 
@@ -55,7 +61,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["activeView"]),
+    ...mapGetters(["activeView", "userMetadata"]),
   },
   methods: {
     ...mapMutations(["changeActiveView"]),
@@ -106,12 +112,19 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 20px;
+        margin-bottom: 1.25rem;
+
+        &::v-deep {
+          .v-btn__content {
+            height: 100%;
+            width: 100%;
+          }
+        }
 
         img {
           object-fit: cover;
-          max-width: 100%;
-          max-height: 100%;
+          width: 100%;
+          height: 100%;
           border-radius: 100%;
         }
       }

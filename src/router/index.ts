@@ -58,10 +58,10 @@ const router = new VueRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   document.title = to.meta?.pageTitle ?? '';
 
-   store.dispatch("handleUserAuthentication")
+   await store.dispatch("handleUserAuthentication")
 
   const isRequesterAuthenticated = store.getters.userMetadata.isAuthenticated;
 

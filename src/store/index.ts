@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import { jwtDecode } from "jwt-decode";
 import Cookies from 'js-cookie';
+import api from '../lib/api';
 
 Vue.use(Vuex);
 
@@ -12,6 +13,9 @@ Vue.use(Vuex);
         id: "",
         isAuthenticated: false,
         token: "",
+        name: "",
+        email: "",
+        profilePicture: ""
       },
       resetCustomInput: false,
       activeView: "contactView",
@@ -30,11 +34,14 @@ Vue.use(Vuex);
       changeActiveView(state, payload: string){
         state.activeView = payload
       },
-      setUserMetadata(state, payload: { id: string, token: string }){
+      setUserMetadata(state, payload: { id: string, token: string, email: string, name: string, profilePicture: string }){
         state.userMetadata = {
           id: payload.id,
           isAuthenticated: true,
-          token: payload.token
+          token: payload.token,
+          email: payload.email,
+          name: payload.name,
+          profilePicture: payload.profilePicture
         }
       },
       logoutSession(state){
@@ -44,6 +51,9 @@ Vue.use(Vuex);
           id: "",
           isAuthenticated: false,
           token: "",
+          email: "",
+          name: "",
+          profilePicture: ""
         }
 
         window.location.href = "/login"
@@ -54,16 +64,32 @@ Vue.use(Vuex);
     },
     // Used to async actions
     actions: {
-      handleUserAuthentication(ctx) {
+     async handleUserAuthentication(ctx) {
         const getToken = Cookies.get("vue-app-session") ?? "";
 
         if (!getToken) return;
 
         const tokenDecoded = jwtDecode(getToken);
 
-        ctx.commit("setUserMetadata", { id: tokenDecoded.sub, token: getToken })
-      },
+        try {
+          const responseProfile = await api.get("/api/v1/user/profile", {
+            headers: {
+              Authorization: `Bearer ${getToken}`
+            }
+          })
 
+          ctx.commit("setUserMetadata", {
+            id: tokenDecoded.sub,
+            token: getToken,
+            name: responseProfile.data.name,
+            email: responseProfile.data.email,
+            profilePicture: responseProfile.data.profilePicture
+           })
+        }catch(e){
+          console.log(e)
+          throw new Error("Error while getting profile...")
+        }
+      }
     },
     // Used to split our application stores
     modules: {

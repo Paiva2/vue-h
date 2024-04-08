@@ -11,6 +11,7 @@ const vuetify = new Vuetify({
   theme: {
     dark: true,
   },
+
 });
 
 export default vuetify;

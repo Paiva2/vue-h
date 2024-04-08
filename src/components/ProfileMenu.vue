@@ -3,12 +3,20 @@
     <v-list>
       <v-list-item>
         <v-list-item-avatar>
-          <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
+          <img
+            :src="
+              userMetadata?.profilePicture ??
+              'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg'
+            "
+            alt="Profile Picture"
+          />
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title>John Leider</v-list-item-title>
-          <v-list-item-subtitle>Founder of Vuetify</v-list-item-subtitle>
+          <v-list-item-title>{{
+            userMetadata?.name ?? "Undefined"
+          }}</v-list-item-title>
+          <v-list-item-subtitle>User</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -31,7 +39,10 @@
             </v-btn>
           </template>
 
-          <EditProfileForm :handleOpenProfileForm="handleOpenProfileForm" />
+          <EditProfileForm
+            :openProfileForm="openProfileForm"
+            :handleOpenProfileForm="handleOpenProfileForm"
+          />
         </v-dialog>
       </v-list-item>
     </v-list>
@@ -46,6 +57,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import store from "../store";
 import EditProfileForm from "./EditProfileForm.vue";
 
@@ -56,6 +68,9 @@ export default {
       openProfileForm: false,
       openProfileMenu: false,
     };
+  },
+  computed: {
+    ...mapGetters(["userMetadata"]),
   },
   components: {
     EditProfileForm,
