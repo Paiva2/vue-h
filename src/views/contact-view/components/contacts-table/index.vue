@@ -66,6 +66,7 @@
             :openDeleteDialog="openDeleteDialog"
             :closeDelete="closeDelete"
             :deleteItemConfirm="deleteItemConfirm"
+            itemDescription="Contact"
           />
         </v-toolbar>
 
@@ -101,7 +102,7 @@
 import { AxiosError } from "axios";
 import { mapGetters } from "vuex";
 import CreateContact from "../create-contact/index.vue";
-import ConfirmDeleteDialog from "../confirm-delete-dialog/index.vue";
+import ConfirmDeleteDialog from "../../../../components/ConfirmDeleteDialog.vue";
 import EmptyTableFallback from "../empty-table-fallback/index.vue";
 import EditContactForm from "../edit-contact-form/index.vue";
 import dateFormatter from "../../../../utils/dateFormatter";

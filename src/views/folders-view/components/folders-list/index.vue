@@ -39,6 +39,10 @@
         >
           <v-icon size="25">mdi-magnify</v-icon>
         </v-btn>
+
+        <v-btn v-if="isFiltering" @click.prevent="clearFilters" color="#373c63">
+          Clear filters
+        </v-btn>
       </div>
 
       <v-divider class="mb-3"></v-divider>
@@ -61,11 +65,11 @@
               <v-icon small> mdi-pencil </v-icon>
             </v-btn>
 
-            <v-btn @click="deleteItem(folder)" icon>
+            <v-btn @click="handleOpenDeleteDialog(folder)" icon>
               <v-icon small> mdi-delete </v-icon>
             </v-btn>
 
-            <v-btn icon>
+            <v-btn @click="handleOpenFolderInfos(folder)" icon>
               <v-icon small>mdi-information</v-icon>
             </v-btn>
           </v-list-item-action>
@@ -77,6 +81,19 @@
           :getAllFolders="getAllFolders"
           :pageOptions="pageOptions"
           :folderToEdit="folderToEdit"
+        />
+
+        <ConfirmDeleteDialog
+          :openDeleteDialog="openDeleteDialog"
+          :closeDelete="closeDelete"
+          :deleteItemConfirm="deleteItemConfirm"
+          itemDescription="Folder"
+        />
+
+        <FolderInfos
+          :openFolderInfos="openFolderInfos"
+          :handleOpenFolderInfos="handleOpenFolderInfos"
+          :folderShowing="folderShowing"
         />
       </v-list>
     </v-list>
@@ -136,22 +153,30 @@ import api from "../../../../lib/api";
 import dateFormatter from "../../../../utils/dateFormatter";
 import CreateFolder from "../create-folder";
 import EditFolder from "../edit-folder";
+import ConfirmDeleteDialog from "../../../../components/ConfirmDeleteDialog";
+import FolderInfos from "../folder-infos";
 
 export default {
   name: "FoldersList",
   components: {
     CreateFolder,
     EditFolder,
+    ConfirmDeleteDialog,
+    FolderInfos,
   },
   data() {
     return {
       isNewFolderFormOpen: false,
       isEditFolderFormOpen: false,
       openItensPerPageModal: false,
+      openDeleteDialog: false,
       loadingFolders: false,
-      showSearch: false,
+      openFolderInfos: false,
+      folderShowing: null,
       searchValue: "",
       folderToEdit: null,
+      folderToDelete: null,
+      isFiltering: false,
       pageOptions: {
         page: 1,
         itemsPerPage: 5,
@@ -189,8 +214,28 @@ export default {
     },
   },
   methods: {
-    handleSearch() {
-      this.showSearch = !this.showSearch;
+    handleOpenFolderInfos(folder) {
+      this.openFolderInfos = !this.openFolderInfos;
+      this.folderShowing = folder;
+
+      return this.openFolderInfos;
+    },
+    async handleSearch() {
+      await this.getAllFolders(
+        this.pageOptions.page,
+        this.pageOptions.itemsPerPage,
+        this.searchValue
+      );
+    },
+    closeDelete() {
+      this.openDeleteDialog = false;
+      this.folderToDelete = null;
+    },
+    handleOpenDeleteDialog(folder) {
+      this.openDeleteDialog = !this.openDeleteDialog;
+      this.folderToDelete = folder;
+
+      return this.openDeleteDialog;
     },
     handleOpenEditForm(folder) {
       this.folderToEdit = folder;
@@ -198,18 +243,45 @@ export default {
 
       return this.isEditFolderFormOpen;
     },
-    async getAllFolders(page, perPage) {
+    async clearFilters() {
+      await this.getAllFolders(1, 5, "");
+      this.isFiltering = false;
+      this.searchValue = "";
+    },
+    async deleteItemConfirm() {
+      try {
+        await api.delete(`/api/v1/folder/${this.folderToDelete.id}`, {
+          headers: {
+            Authorization: `Bearer ${this.userMetadata.token}`,
+          },
+        });
+
+        await this.getAllFolders(
+          this.pageOptions.page,
+          this.pageOptions.itemsPerPage
+        );
+
+        this.closeDelete();
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    async getAllFolders(page = 1, perPage = 5, filtering = "") {
       this.loadingFolders = true;
 
+      let endpoint = `/api/v1/folder/all?page=${page}&size=${perPage}`;
+
+      if (filtering) {
+        endpoint += `&name=${filtering}`;
+        this.isFiltering = true;
+      }
+
       try {
-        const foldersResponse = await api.get(
-          `/api/v1/folder/all?page=${page}&size=${perPage}`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.userMetadata.token}`,
-            },
-          }
-        );
+        const foldersResponse = await api.get(endpoint, {
+          headers: {
+            Authorization: `Bearer ${this.userMetadata.token}`,
+          },
+        });
 
         this.folders = foldersResponse.data.foldersList.map((folder) => {
           folder.createdAt = dateFormatter(new Date(folder.createdAt));

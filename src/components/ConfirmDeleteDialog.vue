@@ -4,11 +4,12 @@
       <v-card-title
         class="text-md delete-title-confirmation text-center justify-center"
       >
-        Are you sure you want to delete this contact?
+        Are you sure you want to delete this {{ itemDescription }}?
       </v-card-title>
+
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="closeDelete"> Cancel </v-btn>
+        <v-btn color="red darken-1" text @click="closeDelete"> Cancel </v-btn>
         <v-btn color="blue darken-1" text @click="deleteItemConfirm">
           Confirm
         </v-btn>
@@ -25,6 +26,7 @@ export default {
     openDeleteDialog: Boolean,
     closeDelete: Function,
     deleteItemConfirm: Function,
+    itemDescription: String,
   },
 };
 </script>
