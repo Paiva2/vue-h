@@ -72,18 +72,18 @@ Vue.use(Vuex);
         const tokenDecoded = jwtDecode(getToken);
 
         try {
-          const responseProfile = await api.get("/api/v1/user/profile", {
+         /*  const responseProfile = await api.get("/api/v1/user/profile", {
             headers: {
               Authorization: `Bearer ${getToken}`
             }
-          })
+          }) */
 
           ctx.commit("setUserMetadata", {
             id: tokenDecoded.sub,
             token: getToken,
-            name: responseProfile.data.name,
+           /*  name: responseProfile.data.name,
             email: responseProfile.data.email,
-            profilePicture: responseProfile.data.profilePicture
+            profilePicture: responseProfile.data.profilePicture */
            })
         }catch(e){
           console.log(e)

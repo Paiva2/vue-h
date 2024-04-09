@@ -7,16 +7,16 @@ const menuOptions = [
   },
   {
     id: "2",
+    label: 'Folders',
+    icon: "mdi-folder",
+    value: "foldersView"
+  },
+  {
+    id: "3",
     label: 'Documents',
     icon: "mdi-file-multiple",
     value: "documentsView"
   },
-  {
-    id: "3",
-    label: 'Folders',
-    icon: "mdi-folder",
-    value: "foldersView"
-  }
 ]
 
 export default menuOptions;
