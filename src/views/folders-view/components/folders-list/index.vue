@@ -6,7 +6,7 @@
         :indeterminate="loadingFolders"
         absolute
         top
-        color="rgb(124, 93, 250)"
+        color="#7c5dfa"
         background-opacity="0.2"
         background-color="#fff"
       ></v-progress-linear>
@@ -56,12 +56,28 @@
             ></v-list-item-subtitle>
           </v-list-item-content>
 
-          <v-list-item-action>
+          <v-list-item-action class="d-inline-flex flex-row">
+            <v-btn @click="handleOpenEditForm(folder)" icon>
+              <v-icon small> mdi-pencil </v-icon>
+            </v-btn>
+
+            <v-btn @click="deleteItem(folder)" icon>
+              <v-icon small> mdi-delete </v-icon>
+            </v-btn>
+
             <v-btn icon>
-              <v-icon color="grey lighten-1">mdi-information</v-icon>
+              <v-icon small>mdi-information</v-icon>
             </v-btn>
           </v-list-item-action>
         </v-list-item>
+
+        <EditFolder
+          :handleOpenEditForm="handleOpenEditForm"
+          :isEditFolderFormOpen="isEditFolderFormOpen"
+          :getAllFolders="getAllFolders"
+          :pageOptions="pageOptions"
+          :folderToEdit="folderToEdit"
+        />
       </v-list>
     </v-list>
 
@@ -103,6 +119,7 @@
               type="number"
               class="per-page-button"
               @click="pageOptions.itemsPerPage = parseInt(option)"
+              :disabled="option > pageOptions.totalElements"
             >
               {{ option }}
             </v-btn>
@@ -118,16 +135,23 @@ import { mapGetters } from "vuex";
 import api from "../../../../lib/api";
 import dateFormatter from "../../../../utils/dateFormatter";
 import CreateFolder from "../create-folder";
+import EditFolder from "../edit-folder";
 
 export default {
   name: "FoldersList",
+  components: {
+    CreateFolder,
+    EditFolder,
+  },
   data() {
     return {
       isNewFolderFormOpen: false,
+      isEditFolderFormOpen: false,
       openItensPerPageModal: false,
       loadingFolders: false,
       showSearch: false,
       searchValue: "",
+      folderToEdit: null,
       pageOptions: {
         page: 1,
         itemsPerPage: 5,
@@ -164,12 +188,15 @@ export default {
       return this.openItensPerPageModal ? "rotate-arrow" : "";
     },
   },
-  components: {
-    CreateFolder,
-  },
   methods: {
     handleSearch() {
       this.showSearch = !this.showSearch;
+    },
+    handleOpenEditForm(folder) {
+      this.folderToEdit = folder;
+      this.isEditFolderFormOpen = !this.isEditFolderFormOpen;
+
+      return this.isEditFolderFormOpen;
     },
     async getAllFolders(page, perPage) {
       this.loadingFolders = true;
