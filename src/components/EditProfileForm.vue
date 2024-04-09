@@ -203,8 +203,12 @@ export default {
         await store.dispatch("handleUserAuthentication");
 
         this.newProfilePicture = null;
-        this.formFields.profilePictureUrl = bodyRequest.profilePicture;
         this.updateSuccess = true;
+        this.formFields = {
+          profilePictureUrl: bodyRequest.profilePicture,
+          name: this.userMetadata.name,
+          password: "",
+        };
       } catch (e) {
         if (e instanceof AxiosError) {
           this.updateError = e.response.data.message;
