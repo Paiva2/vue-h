@@ -33,7 +33,7 @@
             depressed
             :color="setActiveMenuItem(item.value)"
           >
-            <v-icon color="#20212B">{{ item.icon }}</v-icon>
+            <v-icon size="18" color="#fff">{{ item.icon }}</v-icon>
             <span>{{ item.label }}</span>
           </v-btn>
         </li>
@@ -80,12 +80,9 @@ export default {
 <style lang="scss" scoped>
 .sidebar-header {
   width: 100%;
-  max-width: 15rem;
+  max-width: 8.75rem;
   height: 100%;
-  background-color: #373c63;
-  border-radius: 10px;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
+  background-color: #272727;
 
   .menu-items {
     width: 100%;
@@ -97,8 +94,9 @@ export default {
       padding: 0;
       margin: 0;
       list-style: none;
-      font-size: 18px;
+      font-size: 1.125rem;
       align-items: center;
+      gap: 0.625rem;
 
       li {
         width: 100%;
@@ -130,14 +128,16 @@ export default {
       }
 
       .menu-button {
-        height: 50px;
+        height: 3.125rem;
         font-weight: 500;
-        color: rgb(0 0 0 / 87%);
+        color: #fff;
         border-radius: 0;
         font-size: 0.875rem;
-        gap: 10px;
+        gap: 0.625rem;
         display: flex;
         align-items: center;
+        letter-spacing: normal;
+        background-color: transparent !important;
 
         span {
           width: 5.625rem;

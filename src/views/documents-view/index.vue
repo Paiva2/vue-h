@@ -26,7 +26,7 @@ export default {
   flex-direction: column;
 
   h1 {
-    font-size: 2.1875rem;
+    font-size: 1.875rem;
     text-transform: uppercase;
   }
 }
