@@ -26,7 +26,10 @@
           <strong>Created at:</strong> {{ folderFiltered?.createdAt }}
         </v-card-subtitle>
 
-        <v-card-subtitle class="subtitle-card">
+        <v-card-subtitle
+          v-if="folderFiltered?.documents.length > 0"
+          class="subtitle-card"
+        >
           <strong>Documents:</strong>
         </v-card-subtitle>
         <div class="documents-list">

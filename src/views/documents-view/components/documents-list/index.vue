@@ -1,6 +1,11 @@
 <template>
   <div class="view-wrapper">
-    <v-list class="px-3 py-3 elevation-3 list-wrapper" subheader two-line>
+    <v-list
+      class="px-3 py-3 elevation-3 list-wrapper"
+      min-height="600"
+      subheader
+      two-line
+    >
       <v-progress-linear
         :active="loadingDocuments"
         :indeterminate="loadingDocuments"
@@ -47,7 +52,11 @@
 
       <v-divider class="mb-3"></v-divider>
 
-      <v-list max-height="550" class="documents-list">
+      <v-list
+        v-if="documents.length > 0"
+        max-height="550"
+        class="documents-list"
+      >
         <v-list-item v-for="document in documents" :key="document.id">
           <v-list-item-avatar>
             <v-icon class="grey lighten-1" dark> mdi-file </v-icon>
@@ -94,6 +103,9 @@
           :handleOpenDocumentOverview="handleOpenDocumentOverview"
         />
       </v-list>
+      <template v-else>
+        <EmptyListFallback icon="mdi-file-question-outline" />
+      </template>
     </v-list>
 
     <div class="text-center pt-2 list-footer">
@@ -153,6 +165,7 @@ import CreateDocument from "../create-document";
 import DocumentInfos from "../document-infos";
 import ConfirmDeleteDialog from "../../../../components/ConfirmDeleteDialog";
 import DocumentOverview from "../../../../components/DocumentOverview";
+import EmptyListFallback from "../../../../components/EmptyListFallback";
 
 export default {
   name: "DocumentsList",
@@ -161,6 +174,7 @@ export default {
     DocumentInfos,
     ConfirmDeleteDialog,
     DocumentOverview,
+    EmptyListFallback,
   },
   data() {
     return {

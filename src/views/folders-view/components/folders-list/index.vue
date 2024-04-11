@@ -1,6 +1,11 @@
 <template>
   <div class="view-wrapper">
-    <v-list class="px-3 py-3 elevation-3 list-wrapper" subheader two-line>
+    <v-list
+      class="px-3 py-3 elevation-3 list-wrapper"
+      min-height="600"
+      subheader
+      two-line
+    >
       <v-progress-linear
         :active="loadingFolders"
         :indeterminate="loadingFolders"
@@ -47,7 +52,7 @@
 
       <v-divider class="mb-3"></v-divider>
 
-      <v-list max-height="550" class="folders-list">
+      <v-list v-if="folders?.length" max-height="550" class="folders-list">
         <v-list-item v-for="folder in folders" :key="folder.id">
           <v-list-item-avatar>
             <v-icon class="grey lighten-1" dark> mdi-folder </v-icon>
@@ -96,6 +101,9 @@
           :folderShowing="folderShowing"
         />
       </v-list>
+      <div v-else-if="!loadingFolders && !folders.length">
+        <EmptyListFallback icon="mdi-folder-question-outline" />
+      </div>
     </v-list>
 
     <div class="text-center pt-2 list-footer">
@@ -155,6 +163,8 @@ import CreateFolder from "../create-folder";
 import EditFolder from "../edit-folder";
 import ConfirmDeleteDialog from "../../../../components/ConfirmDeleteDialog";
 import FolderInfos from "../folder-infos";
+import EmptyListFallback from "../../../../components/EmptyListFallback";
+import { sleep } from "../../../../utils/sleep";
 
 export default {
   name: "FoldersList",
@@ -163,6 +173,7 @@ export default {
     EditFolder,
     ConfirmDeleteDialog,
     FolderInfos,
+    EmptyListFallback,
   },
   data() {
     return {
@@ -188,10 +199,7 @@ export default {
     };
   },
   async created() {
-    await this.getAllFolders(
-      this.pageOptions.page,
-      this.pageOptions.itemsPerPage
-    );
+    await this.getAllFolders(1, this.pageOptions.itemsPerPage);
   },
   watch: {
     "pageOptions.page": async function () {
@@ -269,6 +277,8 @@ export default {
     async getAllFolders(page = 1, perPage = 5, filtering = "") {
       this.loadingFolders = true;
 
+      await sleep(3000);
+
       let endpoint = `/api/v1/folder/all?page=${page}&size=${perPage}`;
 
       if (filtering) {
@@ -294,7 +304,7 @@ export default {
         );
 
         const setPage =
-          totalPages < foldersResponse.data.page
+          totalPages < foldersResponse.data.page && totalPages > 0
             ? totalPages
             : this.pageOptions.page;
 
@@ -314,7 +324,6 @@ export default {
     handleOpenNewFoldForm() {
       this.isNewFolderFormOpen = !this.isNewFolderFormOpen;
     },
-    getFolders() {},
     handleSetCurrentPage(payload) {
       this.pageOptions.page = payload;
     },

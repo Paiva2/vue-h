@@ -1,7 +1,7 @@
 <template>
   <div class="loading-wrapper">
     <v-icon size="45" color="#fff" class="empty-list-icon">
-      mdi-account-question
+      {{ icon }}
     </v-icon>
 
     <h2>Nothing to show here...</h2>
@@ -10,7 +10,10 @@
 
 <script>
 export default {
-  name: "EmptyTableFallback",
+  name: "EmptyListFallback",
+  props: {
+    icon: String,
+  },
 };
 </script>
 
@@ -20,7 +23,10 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 18px;
+  font-size: 1.125rem;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
 
   h2 {
     color: #fff;

@@ -167,7 +167,7 @@ export default {
       } catch (e) {
         if (e instanceof AxiosError) {
           console.log(e);
-          this.apiErrors = e.response.data.message;
+          this.apiError = e.response.data.message;
         }
       } finally {
         this.sendingNewContact = false;

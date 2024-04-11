@@ -14,7 +14,7 @@
       loading-text=""
     >
       <template v-slot:no-data>
-        <EmptyTableFallback />
+        <EmptyListFallback icon="mdi-account-question" />
       </template>
 
       <template v-slot:top>
@@ -103,17 +103,17 @@ import { AxiosError } from "axios";
 import { mapGetters } from "vuex";
 import CreateContact from "../create-contact/index.vue";
 import ConfirmDeleteDialog from "../../../../components/ConfirmDeleteDialog.vue";
-import EmptyTableFallback from "../empty-table-fallback/index.vue";
 import EditContactForm from "../edit-contact-form/index.vue";
 import dateFormatter from "../../../../utils/dateFormatter";
 import api from "../../../../lib/api";
+import EmptyListFallback from "../../../../components/EmptyListFallback";
 
 export default {
   name: "ContactsTable",
   components: {
     CreateContact,
     ConfirmDeleteDialog,
-    EmptyTableFallback,
+    EmptyListFallback,
     EditContactForm,
   },
   data: () => {

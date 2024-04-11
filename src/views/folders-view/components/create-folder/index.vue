@@ -139,7 +139,7 @@ export default {
       } catch (e) {
         if (e instanceof AxiosError) {
           console.log(e);
-          this.apiErrors = e.response.data.message;
+          this.apiError = e.response.data.message;
         }
       } finally {
         this.sendingUpdateFolder = false;
@@ -175,12 +175,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.apiMessageSuccess {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: rgb(208, 208, 208);
-  text-align: center;
-}
 .apiMessageError {
   font-size: 0.875rem;
   font-weight: 500;
