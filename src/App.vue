@@ -15,7 +15,7 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: "League Spartan", sans-serif;
+  font-family: "League Spartan", sans-serif !important;
 }
 
 #app {

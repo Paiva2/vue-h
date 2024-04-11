@@ -3,6 +3,8 @@ import Vuex from 'vuex';
 import { jwtDecode } from "jwt-decode";
 import Cookies from 'js-cookie';
 import api from '../lib/api';
+import dateFormatter from '../utils/dateFormatter';
+import { AxiosError } from 'axios';
 
 Vue.use(Vuex);
 
@@ -19,6 +21,8 @@ Vue.use(Vuex);
       },
       resetCustomInput: false,
       activeView: "contactView",
+      listOfContacts: [],
+      listofFolders: []
     },
     getters: {
       userMetadata(state) {
@@ -26,11 +30,23 @@ Vue.use(Vuex);
       },
       activeView(state) {
         return state.activeView;
+      },
+      listOfContacts(state){
+        return state.listOfContacts
+      },
+      listOfFolders(state){
+        return state.listofFolders
       }
     },
 
     // Used for normal actions
     mutations: {
+      changeFoldersList(state, payload){
+        state.listofFolders = payload;
+      },
+      changeContactList(state, payload){
+        state.listOfContacts = payload;
+      },
       changeActiveView(state, payload: string){
         state.activeView = payload
       },
@@ -88,6 +104,81 @@ Vue.use(Vuex);
         }catch(e){
           console.log(e)
           throw new Error("Error while getting profile...")
+        }
+      },
+
+      async getUserContacts(ctx, { page, perPage, token, pageOptions }: {
+        page: number,
+        perPage: number,
+        token: string,
+        pageOptions: {}
+      }){
+        try {
+          const requestContacts = await api.get(
+            `/api/v1/contact/list-all?page=${page}&size=${perPage}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          const contacts = requestContacts.data.contactsList.map((contact: any) => {
+            contact.createdAt = dateFormatter(new Date(contact.createdAt));
+
+            return contact;
+          });
+
+          pageOptions = {
+            ...pageOptions,
+            page: contacts.page + 1,
+            itemsPerPage: contacts.pageSize,
+            totalPages: contacts.totalPages,
+            totalElements: contacts.totalElements,
+          };
+
+          ctx.commit("changeContactList", contacts)
+        } catch (e) {
+          if (e instanceof AxiosError) {
+            console.log(e);
+          }
+        }
+      },
+      async getUserFolders(ctx, { page, perPage, token, pageOptions }: {
+        page: number,
+        perPage: number,
+        token: string,
+        pageOptions: {}
+      }){
+        try {
+          const requestContacts = await api.get(
+            `/api/v1/folder/all?page=${page}&size=${perPage}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          const folders = requestContacts.data.foldersList.map((contact: any) => {
+            contact.createdAt = dateFormatter(new Date(contact.createdAt));
+
+            return contact;
+          });
+
+          pageOptions = {
+            ...pageOptions,
+            page: folders.page + 1,
+            itemsPerPage: folders.pageSize,
+            totalPages: folders.totalPages,
+            totalElements: folders.totalElements,
+          };
+
+          ctx.commit("changeFoldersList", folders)
+        } catch (e) {
+          if (e instanceof AxiosError) {
+            console.log(e);
+          }
         }
       }
     },

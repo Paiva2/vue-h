@@ -1,5 +1,5 @@
 <template>
-  <header class="sidebar-header">
+  <header class="sidebar-header elevation-5">
     <nav class="menu-items">
       <ul class="menu-list">
         <v-menu

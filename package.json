@@ -7,10 +7,13 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@babel/plugin-transform-private-methods": "^7.24.1",
     "axios": "^1.6.8",
     "core-js": "^3.8.3",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
+    "pdfvuer": "^1.10.0",
+    "pspdfkit": "^2024.2.0",
     "sass": "^1.72.0",
     "validator": "^13.11.0",
     "vue": "^2.6.14",
